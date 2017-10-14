@@ -22,27 +22,26 @@ class DbManager {
 public:
   DbManager(std::string db_name = CXXDOOR_DBNAME);
 
-  template <class T>
-  void save(T &entity){
-      using boost::archive::text_oarchive;
-      // using boost::archive::save;
+  template <class T> void save(const std::string &key, T &entity) {
+    using boost::archive::text_oarchive;
+    std::stringstream ss;
+    text_oarchive ar(ss);
+    ar << entity;
+    LOG(INFO) << "Serialized entity: " << ss.str();
+    rocksdb::Status status = _db->Put(rocksdb::WriteOptions(), key, ss.str());
+    if (status.ok()) {
+      LOG(INFO) << "Successfully save entity to DB";
+    } else {
+      LOG(ERROR) << status.ToString();
+      throw std::runtime_error(status.ToString());
+    }
+  }
 
-      std::stringstream ss;
-      text_oarchive ar(ss);
-      ar << entity;
-      std::string key =
-          entity.rocksdb_key().get_value_or(entity.new_rocksdb_key());
-      //        std::string value;
-
-      //  auto json = entity->get_json();
-      //  ss << json;
-      //    value = ss.str();
-      LOG(INFO) << "Serialized entity: " << ss.str();
-      rocksdb::Status status = _db->Put(rocksdb::WriteOptions(), key, ss.str());
-      if (status.ok()) {
-        LOG(INFO) << "Successfully save entity to DB";
-      } else
-        throw std::runtime_error(status.ToString());
+  template <class T> void save(T &entity) {
+    const std::string key =
+        dynamic_cast<RocksEntity&>(entity).rocksdb_key().get_value_or(
+            dynamic_cast<RocksEntity&>(entity).new_rocksdb_key());
+    save(key, entity);
   }
 
   template <class T> void load(std::string key, T &entity) {

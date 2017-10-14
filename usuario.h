@@ -37,10 +37,7 @@ private:
 
   // RocksEntity interface
 public:
-  folly::dynamic get_json() const override {
-    return folly::dynamic::object("nombre", nombre)("email", email)("password",
-                                                                    password);
-  }
+  folly::dynamic get_json() const override;
 };
 
 }

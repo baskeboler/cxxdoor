@@ -32,5 +32,10 @@ boost::optional<std::string> RocksEntity::rocksdb_key() const {
     return boost::none;
 }
 
+std::string RocksEntity::new_rocksdb_key() {
+    _id = generateId();
+    return rocksdb_key().get();
+}
+
 bool RocksEntity::is_rocksdb_key_valid() const { return !_id.empty(); }
 }

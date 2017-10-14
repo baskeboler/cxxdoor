@@ -17,6 +17,11 @@ void Usuario::setPassword(const std::string &value) { password = value; }
 
 Usuario::~Usuario() {}
 
+folly::dynamic Usuario::get_json() const {
+    return folly::dynamic::object("nombre", nombre)("email", email)("password",
+                                                                    password);
+}
+
 std::ostream &operator<<(std::ostream &os, const Usuario &c) {
     os << "usuario(" << c.getId() << ", " << c.getEmail() << ", " << c.getNombre()
        << ", " << c.getPassword() << ")";

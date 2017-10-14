@@ -32,10 +32,7 @@ public:
   void setId(const std::string &id);
 
   boost::optional<std::string> rocksdb_key() const;
-  std::string new_rocksdb_key() {
-      _id = generateId();
-      return rocksdb_key().get();
-  }
+  std::string new_rocksdb_key();
 
   virtual folly::dynamic get_json() const = 0;
 

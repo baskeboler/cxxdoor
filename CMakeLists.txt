@@ -32,7 +32,8 @@ find_library(GTEST_MAIN gtest_main)
 set(SRC
     usuario.cpp
     rocksentity.cpp
-    dbmanager.cpp)
+    dbmanager.cpp
+    booking.cpp)
 set(TEST_SRC ${SRC}
     usuariotest.cpp)
 
