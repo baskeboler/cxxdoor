@@ -3,6 +3,8 @@
 #include <gtest/gtest.h>
 #include <glog/logging.h>
 #include "dbmanager.h"
+#include "usuariocontroller.h"
+
 TEST(Usuario, crear_usuario) {
     cxxdoor::Usuario u;
     u.setEmail("mail");
@@ -60,4 +62,16 @@ TEST(Booking, test1) {
     cxxdoor::DbManager::getInstance()->save<cxxdoor::Booking>(b);
     cxxdoor::DbManager::getInstance()->load<cxxdoor::Booking>(key, b2);
     LOG(INFO) << b2;
+}
+
+TEST(UsuarioController, getinstance) {
+    auto c = cxxdoor::UsuarioController::getInstance();
+}
+
+TEST(UsuarioController, md5) {
+    auto c = cxxdoor::UsuarioController::getInstance();
+
+    LOG(INFO) << "md5(hola)" << c->md5("hola");
+
+    LOG(INFO) << "md5(chau)" << c->md5("chau");
 }

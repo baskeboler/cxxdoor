@@ -44,7 +44,7 @@ public:
     save(key, entity);
   }
 
-  template <class T> void load(std::string key, T &entity) {
+  template <class T> bool load(std::string key, T &entity) {
     LOG(INFO) << "fetching object with key: " << key;
     std::string objstring;
     auto s = _db->Get(rocksdb::ReadOptions(), key, &objstring);
@@ -56,8 +56,8 @@ public:
       is.rdbuf()->str(objstring);
       boost::archive::text_iarchive ar(is);
       ar >> entity;
-    } else
-      throw std::runtime_error(s.ToString());
+      return true;
+    } else return false;
   }
 
   static std::shared_ptr<DbManager> getInstance();

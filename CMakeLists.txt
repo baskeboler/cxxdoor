@@ -28,12 +28,14 @@ find_library(PROXYGENHTTPSERVER proxygenhttpserver)
 find_library(DCONV double-conversion)
 find_library(GTEST gtest)
 find_library(GTEST_MAIN gtest_main)
+find_library(CRYPTO++ crypto++)
 
 set(SRC
     usuario.cpp
     rocksentity.cpp
     dbmanager.cpp
-    booking.cpp)
+    booking.cpp
+    usuariocontroller.cpp)
 set(TEST_SRC ${SRC}
     usuariotest.cpp)
 
@@ -44,6 +46,7 @@ add_library(LIBCXXDOOR_TEST SHARED ${TEST_SRC})
 set(LIBS
     ${Z}
     ${CRYPTO}
+    ${CRYPTO++}
     ${SSL}
     ${WANGLE}
     ${PTHREAD}
