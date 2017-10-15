@@ -16,12 +16,25 @@ class Booking : public RocksEntity {
   friend std::ostream& operator<<(std::ostream& os, const Booking& c);
 public:
   Booking();
-  virtual ~Booking() {}
-  template <class Archive>
+  virtual ~Booking() = default;
+
+    template <class Archive>
   void serialize(Archive &ar, const unsigned int /* version */) {
     ar &boost::serialization::base_object<RocksEntity>(*this) &
         usuario &from &to;
   }
+
+    bool operator<(const Booking &rhs) const;
+
+    bool operator>(const Booking &rhs) const;
+
+    bool operator<=(const Booking &rhs) const;
+
+    bool operator>=(const Booking &rhs) const;
+
+    bool operator==(const Booking &rhs) const;
+
+    bool operator!=(const Booking &rhs) const;
 
 private:
   std::shared_ptr<Usuario> usuario;

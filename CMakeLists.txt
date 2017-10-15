@@ -35,9 +35,11 @@ set(SRC
     rocksentity.cpp
     dbmanager.cpp
     booking.cpp
-    usuariocontroller.cpp)
+    usuariocontroller.cpp
+    BookingController.cpp)
 set(TEST_SRC ${SRC}
-    usuariotest.cpp)
+    usuariotest.cpp
+        bookingstest.cpp)
 
 set(MAIN main.cpp)
 add_library(LIBCXXDOOR SHARED ${SRC})
@@ -70,7 +72,7 @@ add_executable(${PROJECT_NAME} ${MAIN})
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 
 
-add_executable(main_test main_test.cpp ${TEST_SRC})
+add_executable(main_test main_test.cpp ${TEST_SRC} )
 target_link_libraries(main_test ${LIBS_TEST})
 
 enable_testing()

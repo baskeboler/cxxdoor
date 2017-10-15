@@ -1,6 +1,6 @@
 #include "dbmanager.h"
 #include <folly/Singleton.h>
-#include <stdexcept>
+#include <utility>
 
 namespace cxxdoor {
 
@@ -11,7 +11,7 @@ struct DbManagerTag {};
 static folly::Singleton<DbManager, DbManagerTag> the_instance;
 // DbManager::DbManager() {}
 
-DbManager::DbManager(std::string db_name) : _db_name(db_name) {
+DbManager::DbManager(std::string db_name) : _db_name(std::move(db_name)) {
   LOG(INFO) << "Initializing DbManager";
   rocksdb::DB *db;
   rocksdb::Options options;

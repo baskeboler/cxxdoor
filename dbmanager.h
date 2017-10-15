@@ -57,7 +57,8 @@ public:
       boost::archive::text_iarchive ar(is);
       ar >> entity;
       return true;
-    } else return false;
+    }
+      return false;
   }
 
   static std::shared_ptr<DbManager> getInstance();

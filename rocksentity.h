@@ -36,6 +36,10 @@ public:
 
   virtual folly::dynamic get_json() const = 0;
 
+    bool operator==(const RocksEntity &rhs) const;
+
+    bool operator!=(const RocksEntity &rhs) const;
+
 private:
   std::string _id;
   std::string entity_class() const;

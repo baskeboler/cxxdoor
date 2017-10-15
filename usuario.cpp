@@ -1,9 +1,9 @@
 #include "usuario.h"
 namespace cxxdoor {
 
-Usuario::Usuario()  {}
+Usuario::Usuario() = default;
 
-std::string Usuario::getNombre() const { return nombre; }
+    std::string Usuario::getNombre() const { return nombre; }
 
 void Usuario::setNombre(const std::string &value) { nombre = value; }
 
@@ -15,9 +15,9 @@ std::string Usuario::getPassword() const { return password; }
 
 void Usuario::setPassword(const std::string &value) { password = value; }
 
-Usuario::~Usuario() {}
+Usuario::~Usuario() = default;
 
-folly::dynamic Usuario::get_json() const {
+    folly::dynamic Usuario::get_json() const {
     return folly::dynamic::object("nombre", nombre)("email", email)("password",
                                                                     password);
 }

@@ -1,7 +1,5 @@
 #include <iostream>
 #include <rocksdb/db.h>
-#include <rocksdb/slice.h>
-#include <string>
 
 using rocksdb::Slice;
 

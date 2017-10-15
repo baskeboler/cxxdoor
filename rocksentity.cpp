@@ -7,9 +7,9 @@ std::ostream &operator<<(std::ostream &os, const RocksEntity &c) {
   return os;
 }
 
-RocksEntity::RocksEntity() {}
+RocksEntity::RocksEntity() = default;
 
-std::string RocksEntity::entity_class() const {
+    std::string RocksEntity::entity_class() const {
   return boost::typeindex::type_id_runtime(*this).pretty_name();
 }
 
@@ -28,7 +28,7 @@ boost::optional<std::string> RocksEntity::rocksdb_key() const {
     std::stringstream ss;
     ss << entity_class() << "/" << _id;
     return ss.str();
-  } else
+  }
     return boost::none;
 }
 
@@ -38,4 +38,12 @@ std::string RocksEntity::new_rocksdb_key() {
 }
 
 bool RocksEntity::is_rocksdb_key_valid() const { return !_id.empty(); }
+
+    bool RocksEntity::operator==(const RocksEntity &rhs) const {
+      return _id == rhs._id;
+    }
+
+    bool RocksEntity::operator!=(const RocksEntity &rhs) const {
+      return !(rhs == *this);
+    }
 }
