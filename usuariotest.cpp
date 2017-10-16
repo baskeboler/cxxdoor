@@ -28,7 +28,7 @@ TEST(Usuario, cargar_usuario) {
   u.setPassword("thisisapassword");
   u.setId(cxxdoor::RocksEntity::generateId());
   LOG(INFO) << "rocksdb key: " << u.rocksdb_key().get();
-  std::string key = u.rocksdb_key().get();
+  const std::string &key = u.rocksdb_key().get();
   cxxdoor::DbManager::getInstance()->save<cxxdoor::Usuario>(u);
 
   cxxdoor::Usuario u2;
@@ -43,7 +43,7 @@ TEST(Booking, test1) {
   u->setPassword("thisisapassword");
   u->setId(cxxdoor::RocksEntity::generateId());
   LOG(INFO) << "rocksdb key: " << u->rocksdb_key().get();
-  std::string key = u->rocksdb_key().get();
+  const std::string &key = u->rocksdb_key().get();
   cxxdoor::DbManager::getInstance()->save<cxxdoor::Usuario>(*u);
 
   std::shared_ptr<cxxdoor::Usuario> u2 = std::make_shared<cxxdoor::Usuario>();
@@ -56,10 +56,10 @@ TEST(Booking, test1) {
   b.setFrom(boost::gregorian::from_simple_string("2017-12-24"));
   b.setTo(boost::gregorian::from_simple_string("2018-1-10"));
   b.setId(cxxdoor::RocksEntity::generateId());
-  key = b.rocksdb_key().get();
+  const std::string &key2 = b.rocksdb_key().get();
 
   cxxdoor::DbManager::getInstance()->save<cxxdoor::Booking>(b);
-  cxxdoor::DbManager::getInstance()->load<cxxdoor::Booking>(key, b2);
+  cxxdoor::DbManager::getInstance()->load<cxxdoor::Booking>(key2, b2);
   LOG(INFO) << b2;
 }
 
@@ -74,6 +74,6 @@ TEST(UsuarioController, md5) {
   LOG(INFO) << "md5(chau)" << c->md5("chau");
   c->crearUsuario("user1", "pass1");
   c->crearUsuario("user2", "pass2");
-  GTEST_ASSERT_EQ(c->authenticate("user1", "pass1"), true);
-  GTEST_ASSERT_EQ(c->authenticate("user1", "pass11"), false);
+  GTEST_ASSERT_EQ(c->authenticate("user1", "pass1").is_initialized(), true);
+  GTEST_ASSERT_EQ(c->authenticate("user1", "pass11").is_initialized(), false);
 }

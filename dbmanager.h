@@ -30,14 +30,12 @@ namespace cxxdoor {
             auto found = _columnFamilies.find(cf);
             if (found == _columnFamilies.end()) {
                 LOG(WARNING) << "Column family " << cf << " does not exist, creating";
-                std::shared_ptr<rocksdb::ColumnFamilyHandle> h;
                 rocksdb::ColumnFamilyHandle *hh;
                 auto s = _db->CreateColumnFamily(rocksdb::ColumnFamilyOptions(), cf, &hh);
                 if (!s.ok()) {
                     LOG(ERROR) << s.ToString();
                 }
-                h.reset(hh);
-                _columnFamilies[cf] = h;
+                _columnFamilies[cf] = hh;
             }
         }
 
@@ -53,7 +51,7 @@ namespace cxxdoor {
                 std::string cfName = boost::typeindex::type_id_runtime(entity).pretty_name();
                 validate_column_family(cfName);
 
-                status = _db->Put(rocksdb::WriteOptions(), _columnFamilies[cfName].get(), key, ss.str());
+                status = _db->Put(rocksdb::WriteOptions(), _columnFamilies[cfName], key, ss.str());
             } else {
                 status = _db->Put(rocksdb::WriteOptions(), key, ss.str());
 
@@ -83,14 +81,12 @@ namespace cxxdoor {
                 std::string cfName = boost::typeindex::type_id_runtime(entity).pretty_name();
                 validate_column_family(cfName);
 
-                s = _db->Get(rocksdb::ReadOptions(), _columnFamilies[cfName].get(), key, &objstring);
+                s = _db->Get(rocksdb::ReadOptions(), _columnFamilies[cfName], key, &objstring);
             } else {
                 s = _db->Get(rocksdb::ReadOptions(), key, &objstring);
             }
             if (s.ok()) {
                 LOG(INFO) << "Successfully recovered value: " << objstring;
-                // char * cstr = objstring.c_str();
-                // membuf buf(cstr, cstr + objstring.size());
                 std::istringstream is;
                 is.rdbuf()->str(objstring);
                 boost::archive::text_iarchive ar(is);
@@ -104,9 +100,9 @@ namespace cxxdoor {
         static std::shared_ptr<DbManager> getInstance();
 
     private:
-        std::shared_ptr<rocksdb::DB> _db;
+        std::unique_ptr<rocksdb::DB, std::function<void(rocksdb::DB*)>> _db;
         std::string _db_name;
-        std::map<std::string, std::shared_ptr<rocksdb::ColumnFamilyHandle>> _columnFamilies;
+        std::map<std::string, rocksdb::ColumnFamilyHandle*> _columnFamilies;
     };
 }
 

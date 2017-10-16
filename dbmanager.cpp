@@ -14,7 +14,6 @@ namespace cxxdoor {
     }
 
     static folly::Singleton<DbManager, DbManagerTag> the_instance;
-// DbManager::DbManager() {}
 
     DbManager::DbManager(std::string db_name) : _db_name(db_name) {
         LOG(INFO) << "Initializing DbManager";
@@ -32,9 +31,25 @@ namespace cxxdoor {
         if (!s.ok()) {
             LOG(WARNING) << s.ToString();
         }
+        for (int i=0; i < cfHandles.size(); i++) {
+          _columnFamilies[cfNames[i]] = cfHandles[i];
+        }
         LOG(INFO) << "Listing column families";
         for (auto f: cfNames) LOG(INFO) << f;
-        _db.reset(db);
+
+        // save delete handler for DB
+        std::unique_ptr<rocksdb::DB, std::function<void(rocksdb::DB*)>> tmp(db, [&](rocksdb::DB * ptr) {
+            LOG(INFO) << "Destroying DB";
+            for (auto cf: _columnFamilies) {
+                auto h = cf.second;
+                auto s = ptr->DestroyColumnFamilyHandle(h);
+                if (!s.ok()) {
+                    LOG(WARNING) << s.ToString();
+                }
+            }
+          delete ptr;
+        });
+        _db = std::move(tmp);
     }
 
     std::shared_ptr<DbManager> DbManager::getInstance() {
@@ -42,13 +57,6 @@ namespace cxxdoor {
     }
 
     DbManager::~DbManager() {
-        for (auto &h: _columnFamilies) {
 
-            auto s =_db->DestroyColumnFamilyHandle(h.second.get());
-            if (!s.ok()) {
-                LOG(ERROR) << s.ToString();
-            }
-        }
-        //_columnFamilies.clear();
     }
 }

@@ -5,6 +5,7 @@
 #include "UsuarioHandler.h"
 #include <proxygen/httpserver/ResponseBuilder.h>
 #include "AuthenticationProcessor.h"
+#include "AddUserProcessor.h"
 using std::string;
 using namespace proxygen;
 
@@ -15,6 +16,8 @@ void UsuarioHandler::onRequest(std::unique_ptr<HTTPMessage> headers) noexcept {
   DLOG(INFO) << "handling onRequest: " << path;
   if (path == "/user/authenticate" && headers->getMethodString() == "POST") {
     _commandProcessor = std::make_shared<AuthenticationProcessor>(this->downstream_);
+  } else if (path == "/user" && headers->getMethodString() == "POST") {
+    _commandProcessor = std::make_shared<AddUserProcessor>(this->downstream_);
   } else {
 
     ResponseBuilder(downstream_).status(500, "Could not handle request")

@@ -1,5 +1,7 @@
 #include "usuariocontroller.h"
 #include <folly/Singleton.h>
+#include <chrono>
+
 namespace cxxdoor {
 static std::string map_key = "CXX_MAP_KEY";
 
@@ -33,13 +35,18 @@ bool UsuarioController::crearUsuario(std::string nombre, std::string password,
   return false;
 }
 
-bool UsuarioController::authenticate(std::string nombre, std::string password) {
+boost::optional<std::shared_ptr<TokenInfo>>
+UsuarioController::authenticate(std::string nombre, std::string password) {
   auto result = _usuarios.find(nombre);
   if (result != _usuarios.end()) {
     auto user = _usuarios[nombre];
-    return user->getPassword() == md5(password);
+    if (user->getPassword() == md5(password)) {
+      auto t = std::make_shared<TokenInfo>(RocksEntity::generateId(), user);
+      _tokens[t->token] = t;
+      return t;
+    }
   }
-  return false;
+  return boost::none;
 }
 
 std::shared_ptr<cxxdoor::UsuarioController>
@@ -60,5 +67,9 @@ std::string UsuarioController::md5(std::string message) {
   encoder.MessageEnd();
 
   return output;
+}
+TokenInfo::TokenInfo(const std::string &token, const std::shared_ptr<Usuario> &usuario)
+    : token(token), usuario(usuario), timestamp(std::chrono::system_clock::now()) {
+
 }
 }

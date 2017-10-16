@@ -49,4 +49,24 @@ namespace cxxdoor {
         _db->save<BookingsVector>(bookings_vector_key, _bookingsVector, false);
         _db->save<BookingsMap>(bookings_map_key, _bookingsByUsername, false);
     }
+bool BookingController::insertSlot(const std::string &username,
+                                   const BookingController::date &from,
+                                   const BookingController::date_duration &duration) {
+  auto user = _usuarioController->getUsuario(username);
+  if (!user) throw std::domain_error("usuario no existe");
+  if (isSlotAvailable(from, duration)) {
+    auto booking = std::make_shared<Booking>();
+    date_period p(from, duration);
+    booking->setFrom(p.begin());
+    booking->setTo(p.end());
+    booking->setUsuario(user.get());
+    booking->setId(RocksEntity::generateId());
+    _bookingsVector.push_back(booking);
+    _bookingsByUsername[booking->getUsuario()->getNombre()].push_back(booking);
+    std::sort(_bookingsVector.begin(), _bookingsVector.end());
+
+    return true;
+  }
+  return false;
+}
 }

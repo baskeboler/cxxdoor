@@ -6,44 +6,56 @@
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <map>
-
+#include <boost/optional.hpp>
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
 
 #include <crypto++/hex.h>
 #include <crypto++/md5.h>
 #include <boost/optional.hpp>
-
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <chrono>
+using boost::gregorian::date;
 namespace cxxdoor {
 
-    class UsuarioController {
-    public:
-        typedef std::map<std::string, std::shared_ptr<Usuario>> UserMap;
+struct TokenInfo {
+  std::string token;
+  std::chrono::system_clock::time_point timestamp;
+  std::shared_ptr<Usuario> usuario;
+  TokenInfo(const std::string &token, const std::shared_ptr<Usuario> &usuario);
+};
 
-        UsuarioController();
+class UsuarioController {
 
-        ~UsuarioController();
+ public:
 
-        bool crearUsuario(std::string nombre, std::string password,
-                          std::string email = "");
+  typedef std::map<std::string, std::shared_ptr<Usuario>> UserMap;
+  typedef std::map<std::string, std::shared_ptr<TokenInfo>> TokenMap;
+  UsuarioController();
 
-        bool authenticate(std::string nombre, std::string password);
+  ~UsuarioController();
 
-        static std::shared_ptr<UsuarioController> getInstance();
+  bool crearUsuario(std::string nombre, std::string password,
+                    std::string email = "");
 
-        std::string md5(std::string message);
+  boost::optional<std::shared_ptr<TokenInfo>> authenticate(std::string nombre, std::string password);
 
-        boost::optional<std::shared_ptr<Usuario>> getUsuario(std::string username) {
-            auto found = _usuarios.find(username);
-            if (found != _usuarios.end()) {
-                return found->second;
-            }
-            return boost::none;
-        }
+  static std::shared_ptr<UsuarioController> getInstance();
 
-    private:
-        std::shared_ptr<DbManager> _db;
-        UserMap _usuarios;
-    };
+  std::string md5(std::string message);
+
+  boost::optional<std::shared_ptr<Usuario>> getUsuario(std::string username) {
+    auto found = _usuarios.find(username);
+    if (found != _usuarios.end()) {
+      return found->second;
+    }
+    return boost::none;
+  }
+
+ private:
+  std::shared_ptr<DbManager> _db;
+  UserMap _usuarios;
+  TokenMap _tokens;
+};
 }
 
 #endif // USUARIOCONTROLLER_H

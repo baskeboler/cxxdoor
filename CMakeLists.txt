@@ -40,7 +40,8 @@ set(SRC
         UsuarioHandler.cpp
         CommandProcessor.cpp
         HandlerFactory.cpp
-        AuthenticationProcessor.cpp)
+        AuthenticationProcessor.cpp
+        AddUserProcessor.cpp)
 
 set(TEST_SRC ${SRC}
     usuariotest.cpp
