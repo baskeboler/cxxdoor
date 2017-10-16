@@ -12,6 +12,10 @@
 #include <map>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <stdexcept>
+#include <boost/thread/mutex.hpp>
+
+#include <folly/Synchronized.h>
+
 namespace cxxdoor {
 
     class BookingController {
@@ -30,8 +34,8 @@ namespace cxxdoor {
         bool isSlotAvailable(const date &from, const date_duration &duration);
         bool insertSlot(const std::string &username, const date& from, const date_duration &duration);
     private:
-        BookingsMap _bookingsByUsername;
-        BookingsVector _bookingsVector;
+        folly::Synchronized<BookingsMap, std::mutex> _bookingsByUsername;
+        folly::Synchronized<BookingsVector, std::mutex> _bookingsVector;
         std::shared_ptr<DbManager> _db;
         std::shared_ptr<UsuarioController> _usuarioController;
     };

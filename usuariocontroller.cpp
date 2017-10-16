@@ -1,6 +1,9 @@
 #include "usuariocontroller.h"
-#include <folly/Singleton.h>
 #include <chrono>
+#include <folly/Synchronized.h>
+#include <folly/Singleton.h>
+
+using namespace folly;
 
 namespace cxxdoor {
 static std::string map_key = "CXX_MAP_KEY";
@@ -9,27 +12,30 @@ namespace {
 struct UsuarioControllerTag {};
 }
 
-static folly::Singleton<UsuarioController, UsuarioControllerTag> the_instance;
+static Singleton<UsuarioController, UsuarioControllerTag> the_instance;
 
 UsuarioController::UsuarioController() {
+  auto locked = _usuarios.lock();
   _db = DbManager::getInstance();
-  _db->load<UserMap>(map_key, _usuarios, false);
+  _db->load<UserMap>(map_key, *locked, false);
 }
 
 UsuarioController::~UsuarioController() {
-  _db->save<UserMap>(map_key, _usuarios, false);
+  auto locked = _usuarios.lock();
+  _db->save<UserMap>(map_key, *locked, false);
 }
 
 bool UsuarioController::crearUsuario(std::string nombre, std::string password,
                                      std::string email) {
-  auto found = _usuarios.find(nombre);
-  if (found == _usuarios.end()) {
+ auto locked = _usuarios.lock();
+  auto found = locked->find(nombre);
+  if (found == locked->end()) {
     auto user = std::make_shared<Usuario>();
     user->setNombre(nombre);
     user->setPassword(md5(password));
     user->setEmail(email);
     user->setId(RocksEntity::generateId());
-    _usuarios[nombre] = user;
+    locked->emplace(std::make_pair(std::string(nombre), user));
     return true;
   }
   return false;
@@ -37,20 +43,22 @@ bool UsuarioController::crearUsuario(std::string nombre, std::string password,
 
 boost::optional<std::shared_ptr<TokenInfo>>
 UsuarioController::authenticate(std::string nombre, std::string password) {
-  auto result = _usuarios.find(nombre);
-  if (result != _usuarios.end()) {
-    auto user = _usuarios[nombre];
+  auto locked = _usuarios.lock();
+  auto result = locked->find(nombre);
+  if (result != locked->end()) {
+    auto user = result->second;//(*locked[nombre];
     if (user->getPassword() == md5(password)) {
+      auto tokens = _tokens.lock();
       auto t = std::make_shared<TokenInfo>(RocksEntity::generateId(), user);
-      _tokens[t->token] = t;
+      tokens->emplace(std::make_pair(std::string(t->token), t));
       return t;
     }
   }
   return boost::none;
 }
 
-std::shared_ptr<cxxdoor::UsuarioController>
-cxxdoor::UsuarioController::getInstance() {
+std::shared_ptr<UsuarioController>
+UsuarioController::getInstance() {
   return the_instance.try_get();
 }
 

@@ -15,7 +15,7 @@ set(BOOST_USE_STATIC_RUNTIME OFF)
 find_package(Boost 1.60 COMPONENTS date_time filesystem system atomic thread serialization)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
-find_library(FOLLY folly)
+find_library(FOLLY libfolly.a)
 find_library(WANGLE wangle)
 find_library(PTHREAD pthread)
 find_library(GLOG glog)

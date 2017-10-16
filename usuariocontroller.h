@@ -6,7 +6,10 @@
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <map>
+#include <boost/thread/mutex.hpp>
 #include <boost/optional.hpp>
+#include <folly/Synchronized.h>
+#include <folly/AtomicHashMap.h>
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
 
 #include <crypto++/hex.h>
@@ -44,8 +47,9 @@ class UsuarioController {
   std::string md5(std::string message);
 
   boost::optional<std::shared_ptr<Usuario>> getUsuario(std::string username) {
-    auto found = _usuarios.find(username);
-    if (found != _usuarios.end()) {
+    auto locked = _usuarios.lock();
+    auto found = locked->find(username);
+    if (found != locked->end()) {
       return found->second;
     }
     return boost::none;
@@ -53,8 +57,8 @@ class UsuarioController {
 
  private:
   std::shared_ptr<DbManager> _db;
-  UserMap _usuarios;
-  TokenMap _tokens;
+  folly::Synchronized<UserMap, boost::mutex> _usuarios;
+  folly::Synchronized<TokenMap, boost::mutex> _tokens;
 };
 }
 

@@ -6,6 +6,7 @@
 #define CXXDOOR_HANDLERFACTORY_H
 
 #include <proxygen/httpserver/RequestHandlerFactory.h>
+#include <proxygen/httpserver/filters/DirectResponseHandler.h>
 #include <folly/io/async/EventBaseManager.h>
 #include <proxygen/httpserver/filters/RejectConnectFilter.h>
 #include <boost/algorithm/string.hpp>
@@ -34,7 +35,7 @@ class HandlerFactory : public proxygen::RequestHandlerFactory {
       DLOG(INFO) << "starts with /user";
       return new UsuarioHandler();
     }
-    return new proxygen::RejectConnectFilter(handler);
+    return new proxygen::DirectResponseHandler(404, "Not Found", "Fuck off");
   }
   virtual ~HandlerFactory() = default;
 };
