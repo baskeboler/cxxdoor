@@ -13,36 +13,36 @@ namespace cxxdoor {
 
 class Booking : public RocksEntity {
   friend boost::serialization::access;
-  friend std::ostream& operator<<(std::ostream& os, const Booking& c);
-public:
+  friend std::ostream &operator<<(std::ostream &os, const Booking &c);
+ public:
   Booking();
   virtual ~Booking() = default;
 
-    template <class Archive>
+  template<class Archive>
   void serialize(Archive &ar, const unsigned int /* version */) {
-    ar &boost::serialization::base_object<RocksEntity>(*this) &
-        usuario &from &to;
+    ar & boost::serialization::base_object<RocksEntity>(*this) &
+        usuario & from & to;
   }
 
-    bool operator<(const Booking &rhs) const;
+  bool operator<(const Booking &rhs) const;
 
-    bool operator>(const Booking &rhs) const;
+  bool operator>(const Booking &rhs) const;
 
-    bool operator<=(const Booking &rhs) const;
+  bool operator<=(const Booking &rhs) const;
 
-    bool operator>=(const Booking &rhs) const;
+  bool operator>=(const Booking &rhs) const;
 
-    bool operator==(const Booking &rhs) const;
+  bool operator==(const Booking &rhs) const;
 
-    bool operator!=(const Booking &rhs) const;
+  bool operator!=(const Booking &rhs) const;
 
-private:
+ private:
   std::shared_ptr<Usuario> usuario;
   boost::gregorian::date from;
   boost::gregorian::date to;
 
   // RocksEntity interface
-public:
+ public:
   folly::dynamic get_json() const override;
   std::shared_ptr<Usuario> getUsuario() const;
   void setUsuario(const std::shared_ptr<Usuario> &value);

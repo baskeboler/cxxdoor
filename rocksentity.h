@@ -14,15 +14,15 @@
 namespace cxxdoor {
 
 class RocksEntity {
-    friend boost::serialization::access;
-    friend std::ostream &operator<<(std::ostream& os, const RocksEntity& c);
+  friend boost::serialization::access;
+  friend std::ostream &operator<<(std::ostream &os, const RocksEntity &c);
 
-public:
+ public:
   RocksEntity();
 
   template<class Archive>
-  void serialize(Archive& a, const unsigned int version) {
-      a & _id;
+  void serialize(Archive &a, const unsigned int version) {
+    a & _id;
   }
 
   virtual ~RocksEntity() = default;
@@ -36,15 +36,15 @@ public:
 
   virtual folly::dynamic get_json() const = 0;
 
-    bool operator==(const RocksEntity &rhs) const;
+  bool operator==(const RocksEntity &rhs) const;
 
-    bool operator!=(const RocksEntity &rhs) const;
+  bool operator!=(const RocksEntity &rhs) const;
 
-private:
+ private:
   std::string _id;
   std::string entity_class() const;
 
-protected:
+ protected:
   bool is_rocksdb_key_valid() const;
 };
 

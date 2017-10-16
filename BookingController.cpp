@@ -40,13 +40,13 @@ namespace cxxdoor {
         _db = DbManager::getInstance();
         _usuarioController = UsuarioController::getInstance();
 
-        _db->load<BookingsVector>(bookings_vector_key, _bookingsVector);
-        _db->load<BookingsMap>(bookings_map_key, _bookingsByUsername);
+        _db->load<BookingsVector>(bookings_vector_key, _bookingsVector, false);
+        _db->load<BookingsMap>(bookings_map_key, _bookingsByUsername, false);
     }
 
     BookingController::~BookingController() {
         LOG(INFO) << "Destroying BookingController";
-        _db->save<BookingsVector>(bookings_vector_key, _bookingsVector);
-        _db->save<BookingsMap>(bookings_map_key, _bookingsByUsername);
+        _db->save<BookingsVector>(bookings_vector_key, _bookingsVector, false);
+        _db->save<BookingsMap>(bookings_map_key, _bookingsByUsername, false);
     }
 }

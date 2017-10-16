@@ -1,7 +1,7 @@
 #include "usuariocontroller.h"
 #include <folly/Singleton.h>
 namespace cxxdoor {
-std::string UsuarioController::map_key = "CXX_MAP_KEY";
+static std::string map_key = "CXX_MAP_KEY";
 
 namespace {
 struct UsuarioControllerTag {};
@@ -11,12 +11,11 @@ static folly::Singleton<UsuarioController, UsuarioControllerTag> the_instance;
 
 UsuarioController::UsuarioController() {
   _db = DbManager::getInstance();
-
-  _db->load<UserMap>(map_key, _usuarios);
+  _db->load<UserMap>(map_key, _usuarios, false);
 }
 
 UsuarioController::~UsuarioController() {
-  _db->save<UserMap>(map_key, _usuarios);
+  _db->save<UserMap>(map_key, _usuarios, false);
 }
 
 bool UsuarioController::crearUsuario(std::string nombre, std::string password,

@@ -41,6 +41,7 @@ namespace cxxdoor {
                 _bookingsVector.push_back(booking);
                 _bookingsByUsername[booking->getUsuario()->getNombre()].push_back(booking);
                 std::sort(_bookingsVector.begin(), _bookingsVector.end());
+
                 return true;
             }
             return false;

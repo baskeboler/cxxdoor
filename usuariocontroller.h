@@ -43,7 +43,6 @@ namespace cxxdoor {
     private:
         std::shared_ptr<DbManager> _db;
         UserMap _usuarios;
-        static std::string map_key;
     };
 }
 

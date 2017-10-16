@@ -28,7 +28,7 @@ public:
   std::string getPassword() const;
   void setPassword(const std::string &value);
 
-  virtual ~Usuario();
+  virtual ~Usuario() = default;
 
 private:
   std::string nombre;

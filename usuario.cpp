@@ -3,7 +3,7 @@ namespace cxxdoor {
 
 Usuario::Usuario() = default;
 
-    std::string Usuario::getNombre() const { return nombre; }
+std::string Usuario::getNombre() const { return nombre; }
 
 void Usuario::setNombre(const std::string &value) { nombre = value; }
 
@@ -15,17 +15,16 @@ std::string Usuario::getPassword() const { return password; }
 
 void Usuario::setPassword(const std::string &value) { password = value; }
 
-Usuario::~Usuario() = default;
 
-    folly::dynamic Usuario::get_json() const {
-    return folly::dynamic::object("nombre", nombre)("email", email)("password",
-                                                                    password);
+folly::dynamic Usuario::get_json() const {
+  return folly::dynamic::object("nombre", nombre)("email", email)("password",
+                                                                  password);
 }
 
 std::ostream &operator<<(std::ostream &os, const Usuario &c) {
-    os << "usuario(" << c.getId() << ", " << c.getEmail() << ", " << c.getNombre()
-       << ", " << c.getPassword() << ")";
-    return os;
+  os << "usuario(" << c.getId() << ", " << c.getEmail() << ", " << c.getNombre()
+     << ", " << c.getPassword() << ")";
+  return os;
 }
 
 }
