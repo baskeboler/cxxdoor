@@ -3,7 +3,7 @@
 //
 
 #include "HandlerFactory.h"
-#include <folly/Memory.h>
+//#include <folly/Memory.h>
 
 
 #include <boost/algorithm/string.hpp>

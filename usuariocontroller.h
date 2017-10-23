@@ -18,6 +18,10 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <chrono>
 using boost::gregorian::date;
+using std::chrono::system_clock;
+using std::chrono::time_point;
+using std::chrono::duration;
+
 namespace cxxdoor {
 
 struct TokenInfo {
@@ -54,7 +58,15 @@ class UsuarioController {
     }
     return boost::none;
   }
-
+  bool validateToken(const std::string &token) {
+    auto locked = _tokens.lock();
+    auto res = locked->find(token);
+    if (res != locked->end()) {
+      system_clock::time_point expiry(res->second->timestamp + std::chrono::minutes(10));
+      return system_clock::now() < expiry;
+    }
+    return false;
+  }
  private:
   std::shared_ptr<DbManager> _db;
   folly::Synchronized<UserMap, boost::mutex> _usuarios;

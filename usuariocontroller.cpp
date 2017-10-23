@@ -2,7 +2,8 @@
 #include <chrono>
 #include <folly/Synchronized.h>
 #include <folly/Singleton.h>
-
+#include <proxygen/lib/utils/CryptUtil.h>
+#include <folly/Range.h>
 using namespace folly;
 
 namespace cxxdoor {
@@ -63,19 +64,9 @@ UsuarioController::getInstance() {
 }
 
 std::string UsuarioController::md5(std::string message) {
-  CryptoPP::Weak::MD5 hash;
-  byte digest[CryptoPP::Weak::MD5::DIGESTSIZE];
-  hash.CalculateDigest(digest, reinterpret_cast<const byte *>(message.c_str()),
-                       message.length());
-
-  CryptoPP::HexEncoder encoder;
-  std::string output;
-  encoder.Attach(new CryptoPP::StringSink(output));
-  encoder.Put(digest, sizeof(digest));
-  encoder.MessageEnd();
-
-  return output;
+  return proxygen::md5Encode(folly::StringPiece(message));
 }
+
 TokenInfo::TokenInfo(const std::string &token, const std::shared_ptr<Usuario> &usuario)
     : token(token), usuario(usuario), timestamp(std::chrono::system_clock::now()) {
 

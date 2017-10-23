@@ -7,7 +7,7 @@
 #include <proxygen/httpserver/RequestHandler.h>
 #include <proxygen/lib/utils/StateMachine.h>
 #include "CommandProcessor.h"
-#include <folly/Memory.h>
+//#include <folly/Memory.h>
 
 namespace cxxdoor {
 

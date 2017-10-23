@@ -1,10 +1,10 @@
-#include <folly/Memory.h>
+//#include <folly/Memory.h>
 #include <gflags/gflags.h>
 #include <folly/io/async/EventBaseManager.h>
 #include <proxygen/httpserver/HTTPServer.h>
 #include <folly/init/Init.h>
-//#include <unistd.h>
-
+#include <unistd.h>
+#include "LoggingFilter.h"
 #include "HandlerFactory.h"
 
 using namespace proxygen;
@@ -44,6 +44,7 @@ int main(int argc, char **argv) {
   options.shutdownOn = {SIGINT, SIGTERM};
   options.enableContentCompression = false;
   options.handlerFactories = RequestHandlerChain()
+      .addThen<cxxdoor::LoggingFilterFactory>()
       .addThen<cxxdoor::HandlerFactory>()
       .build();
   options.h2cEnabled = true;

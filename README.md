@@ -26,6 +26,7 @@ A toy, proof of concept application demonstrating the use of Facebook c++ librar
 
 Data access is implemented using RocksDB which is a persistent key/value store that I've used to store individual entities and also entire STL containers such as std::vector and std::map with the help of boost::serialization
 
+#### `boost::serialization`
 
 ``` c++
 template <class Archive>
@@ -35,40 +36,41 @@ template <class Archive>
 }
 ```
 
+* dbconfig.h
+* dbmanager.h
 
 
 ### entities
 
+* booking.h
+* rocksentity.h
+* usuario.h
 
 
 ### controllers
+
 * BookingController.h
+* usuariocontroller.h
 
 #### Use of `folly::Synchronized` and `folly::Singleton`
 
 
 ### Request Handlers
 
+* HandlerFactory.h
+* UsuarioHandler.h
+
 ### Filters
 
 ### Processors
+* AddUserProcessor.h
+* AuthenticationProcessor.h
+* CommandProcessor.h
 
 
 ### unit tests
 
-
-* AddUserProcessor.h
-* AuthenticationProcessor.h
-* CommandProcessor.h
-* HandlerFactory.h
-* UsuarioHandler.h
-* booking.h
-* bookingstest.cpp
-* dbconfig.h
-* dbmanager.h
-* main.cpp
 * main_test.cpp
-* rocksentity.h
-* usuario.h
-* usuariocontroller.h
+* bookingstest.cpp
 * usuariotest.cpp
+
