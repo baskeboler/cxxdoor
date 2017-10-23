@@ -42,13 +42,13 @@ static std::string bookings_map_key = "CXXDOOR_BOOKINGS_MAP";
 
 BookingController::BookingController() {
   LOG(INFO) << "Initializing BookingController";
-  _db = DbManager::getInstance();
-  _usuarioController = UsuarioController::getInstance();
+  //_db = DbManager::getInstance();
+  //_usuarioController = UsuarioController::getInstance();
   {
     auto locked1 = _bookingsVector.lock();
     auto locked2 = _bookingsByUsername.lock();
-    _db->load<BookingsVector>(bookings_vector_key, *locked1, false);
-    _db->load<BookingsMap>(bookings_map_key, *locked2, false);
+    DbManager::getInstance()->load<BookingsVector>(bookings_vector_key, *locked1, false);
+    DbManager::getInstance()->load<BookingsMap>(bookings_map_key, *locked2, false);
   }
 }
 
@@ -57,13 +57,13 @@ BookingController::~BookingController() {
 
   auto locked1 = _bookingsVector.lock();
   auto locked2 = _bookingsByUsername.lock();
-  _db->save<BookingsVector>(bookings_vector_key, *locked1, false);
-  _db->save<BookingsMap>(bookings_map_key, *locked2, false);
+  DbManager::getInstance()->save<BookingsVector>(bookings_vector_key, *locked1, false);
+  DbManager::getInstance()->save<BookingsMap>(bookings_map_key, *locked2, false);
 }
 bool BookingController::insertSlot(const std::string &username,
                                    const BookingController::date &from,
                                    const BookingController::date_duration &duration) {
-  auto user = _usuarioController->getUsuario(username);
+  auto user = UsuarioController::getInstance()->getUsuario(username);
   if (!user) throw std::domain_error("usuario no existe");
   if (isSlotAvailable(from, duration)) {
     auto booking = std::make_shared<Booking>();

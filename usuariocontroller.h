@@ -50,7 +50,7 @@ class UsuarioController {
 
   std::string md5(std::string message);
 
-  boost::optional<std::shared_ptr<Usuario>> getUsuario(std::string username) {
+  boost::optional<std::shared_ptr<Usuario>> getUsuario(const std::string& username) {
     auto locked = _usuarios.lock();
     auto found = locked->find(username);
     if (found != locked->end()) {
@@ -68,7 +68,7 @@ class UsuarioController {
     return false;
   }
  private:
-  std::shared_ptr<DbManager> _db;
+  //std::shared_ptr<DbManager> _db;
   folly::Synchronized<UserMap, boost::mutex> _usuarios;
   folly::Synchronized<TokenMap, boost::mutex> _tokens;
 };

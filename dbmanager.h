@@ -107,7 +107,7 @@ class DbManager {
   static std::shared_ptr<DbManager> getInstance();
 
  private:
-  std::unique_ptr<rocksdb::DB, std::function<void(rocksdb::DB *)>> _db;
+  rocksdb::DB *_db;
   std::string _db_name;
   std::map<std::string, rocksdb::ColumnFamilyHandle *> _columnFamilies;
 };

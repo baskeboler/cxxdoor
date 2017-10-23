@@ -19,6 +19,7 @@ public:
   }
   Usuario();
 
+  Usuario(Usuario&& other);
   std::string getNombre() const;
   void setNombre(const std::string &value);
 

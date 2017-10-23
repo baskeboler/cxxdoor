@@ -17,13 +17,13 @@ static Singleton<UsuarioController, UsuarioControllerTag> the_instance;
 
 UsuarioController::UsuarioController() {
   auto locked = _usuarios.lock();
-  _db = DbManager::getInstance();
-  _db->load<UserMap>(map_key, *locked, false);
+  //_db = DbManager::getInstance();
+  DbManager::getInstance()->load<UserMap>(map_key, *locked, false);
 }
 
 UsuarioController::~UsuarioController() {
   auto locked = _usuarios.lock();
-  _db->save<UserMap>(map_key, *locked, false);
+  DbManager::getInstance()->save<UserMap>(map_key, *locked, false);
 }
 
 bool UsuarioController::crearUsuario(std::string nombre, std::string password,

@@ -17,7 +17,7 @@ static folly::Singleton<DbManager, DbManagerTag> the_instance;
 
 DbManager::DbManager(const std::string &db_name) : _db_name(db_name) {
   LOG(INFO) << "Initializing DbManager";
-  rocksdb::DB *db;
+  //rocksdb::DB *db;
   rocksdb::Options options;
   options.create_if_missing = true;
   options.create_missing_column_families = true;
@@ -29,7 +29,7 @@ DbManager::DbManager(const std::string &db_name) : _db_name(db_name) {
   for (auto &cfName: cfNames) {
     cfDescr.push_back(rocksdb::ColumnFamilyDescriptor(cfName, rocksdb::ColumnFamilyOptions()));
   }
-  rocksdb::DB::Open(options, _db_name, cfDescr, &cfHandles, &db);
+  rocksdb::DB::Open(options, _db_name, cfDescr, &cfHandles, &_db);
   if (!s.ok()) {
     LOG(WARNING) << s.ToString();
   }
@@ -40,31 +40,29 @@ DbManager::DbManager(const std::string &db_name) : _db_name(db_name) {
     _columnFamilies[name] = cfHandle;
   }
 
-  // save delete handler for DB
-  std::unique_ptr<rocksdb::DB, std::function<void(rocksdb::DB *)>> tmp(std::move(db), [this](rocksdb::DB *ptr) {
-    LOG(INFO) << "Destroying DB";
-    for (const auto &cf: _columnFamilies) {
-      try {
 
-        auto h = cf.second;
-        LOG(INFO) << "Destroying ColumnFamilyHandle: " << h->GetName();
-        auto s = ptr->DestroyColumnFamilyHandle(h);
-        // h = nullptr;
-        if (!s.ok()) {
-          LOG(WARNING) << s.ToString();
-        }
-      } catch (std::exception &e) {
-        LOG(ERROR) << e.what();
-      }
-    }
-    //delete ptr;
-  });
-  _db = std::move(tmp);
 }
 
 std::shared_ptr<DbManager> DbManager::getInstance() {
   return the_instance.try_get();
 }
 
-DbManager::~DbManager() = default;
+DbManager::~DbManager() {
+  LOG(INFO) << "Destroying DB";
+  for (const auto &cf: _columnFamilies) {
+    try {
+
+      auto h = cf.second;
+      LOG(INFO) << "Destroying ColumnFamilyHandle: " << h->GetName();
+      auto s = _db->DestroyColumnFamilyHandle(h);
+      // h = nullptr;
+      if (!s.ok()) {
+        LOG(WARNING) << s.ToString();
+      }
+    } catch (std::exception &e) {
+      LOG(ERROR) << e.what();
+    }
+  }
+  delete _db;
+}
 }

@@ -36,8 +36,8 @@ namespace cxxdoor {
     private:
         folly::Synchronized<BookingsMap, std::mutex> _bookingsByUsername;
         folly::Synchronized<BookingsVector, std::mutex> _bookingsVector;
-        std::shared_ptr<DbManager> _db;
-        std::shared_ptr<UsuarioController> _usuarioController;
+       // std::shared_ptr<DbManager> _db;
+       // std::shared_ptr<UsuarioController> _usuarioController;
     };
 }
 

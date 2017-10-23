@@ -19,6 +19,10 @@ class RocksEntity {
 
  public:
   RocksEntity();
+  RocksEntity(RocksEntity&& other): _id(nullptr) {
+    _id = other._id;
+    other._id = nullptr;
+  }
 
   template<class Archive>
   void serialize(Archive &a, const unsigned int version) {

@@ -16,6 +16,12 @@ class Booking : public RocksEntity {
   friend std::ostream &operator<<(std::ostream &os, const Booking &c);
  public:
   Booking();
+  Booking(Booking &&other) noexcept:
+      RocksEntity(std::move(other)),
+      usuario(nullptr), to(other.to), from(other.from) {
+    usuario = other.usuario;
+    other.usuario = nullptr;
+  }
   virtual ~Booking() = default;
 
   template<class Archive>
